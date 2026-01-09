@@ -18,15 +18,13 @@ export default function AdminPage() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [toastEvent, setToastEvent] = useState<TransportEventWithResident | null>(null);
-  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default");
-  const { playDing } = useSoundAlert();
-
-  // Check notification permission on mount
-  useEffect(() => {
-    if ("Notification" in window) {
-      setNotificationPermission(Notification.permission);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      return Notification.permission;
     }
-  }, []);
+    return "default";
+  });
+  const { playDing } = useSoundAlert();
 
   // Request notification permission
   const requestNotificationPermission = async () => {
@@ -168,7 +166,7 @@ export default function AdminPage() {
             )}
             {notificationPermission === "granted" && (
               <div className="flex items-center gap-2">
-                <span className="text-green-300 text-sm">🔔 Alerts On</span>
+                <span className="text-blue-200 text-sm">Alerts On</span>
                 <button
                   onClick={() => {
                     const testEvent = {
@@ -180,7 +178,7 @@ export default function AdminPage() {
                     playDing();
                     sendDesktopNotification(testEvent);
                   }}
-                  className="px-3 py-1.5 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-medium"
+                  className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-sm"
                 >
                   Test
                 </button>
@@ -188,7 +186,7 @@ export default function AdminPage() {
             )}
             <Link
               href="/floor"
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-sm"
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-sm w-[160px] text-center"
             >
               Open Floor View
             </Link>

@@ -13,16 +13,14 @@ export default function FloorPage() {
   const { events, isLoading, error, refetch, lastNewEvent } = useRealtimeEvents();
   const currentTime = useCurrentTime(30000); // Update every 30 seconds
   const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default");
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      return Notification.permission;
+    }
+    return "default";
+  });
   const [toastEvent, setToastEvent] = useState<TransportEventWithResident | null>(null);
   const { playDing } = useSoundAlert();
-
-  // Check notification permission on mount
-  useEffect(() => {
-    if ("Notification" in window) {
-      setNotificationPermission(Notification.permission);
-    }
-  }, []);
 
   // Request notification permission
   const requestNotificationPermission = async () => {
@@ -152,10 +150,10 @@ export default function FloorPage() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-slate-700 text-white shadow-lg">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Nursing Floor</h1>
-            <p className="text-slate-300 text-sm">Tablet View • {timeString}</p>
+            <p className="text-slate-300 text-sm">Tablet View</p>
           </div>
           <div className="flex items-center gap-4">
             {notificationPermission === "default" && (
@@ -168,21 +166,21 @@ export default function FloorPage() {
             )}
             {notificationPermission === "granted" && (
               <div className="flex items-center gap-2">
-                <span className="text-white text-sm">Alerts On</span>
+                <span className="text-slate-300 text-sm">Alerts On</span>
                 <button
                   onClick={handleTestNotification}
-                  className="px-4 py-2 bg-slate-600 hover:bg-slate-500 rounded-lg text-sm"
+                  className="px-4 py-2 bg-slate-500 hover:bg-slate-400 rounded-lg text-sm"
                 >
                   Test
                 </button>
               </div>
             )}
-            <button
-              onClick={() => refetch()}
-              className="px-4 py-2 bg-slate-600 hover:bg-slate-500 rounded-lg text-sm"
+            <Link
+              href="/admin"
+              className="px-4 py-2 bg-slate-500 hover:bg-slate-400 rounded-lg text-sm w-[160px] text-center"
             >
-              Refresh
-            </button>
+              Open Admin View
+            </Link>
             <Link href="/" className="text-slate-300 hover:text-white text-sm">
               Home
             </Link>
@@ -190,7 +188,7 @@ export default function FloorPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="max-w-6xl mx-auto px-4 py-6">
         {/* Stats Bar */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">
