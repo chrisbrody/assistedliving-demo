@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Status colors */
+.status-scheduled {
+  @apply bg-white border-gray-200;
+}
+
+.status-prep-alert {
+  @apply bg-amber-50 border-amber-300 animate-pulse;
+}
+
+.status-prepping {
+  @apply bg-yellow-100 border-yellow-400;
+}
+
+.status-ready {
+  @apply bg-green-100 border-green-500;
+}
+
+.status-departed {
+  @apply bg-gray-100 border-gray-300 opacity-60;
+}
+
+/* Big touch targets for tablet */
+.touch-button {
+  @apply min-h-[60px] min-w-[120px] text-lg font-semibold rounded-xl
+         active:scale-95 transition-transform touch-manipulation;
+}
