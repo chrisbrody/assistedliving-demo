@@ -1,0 +1,14 @@
+name: Keep Database Alive
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Runs daily at 8 AM UTC
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping database
+        run: |
+          curl -f "${{ secrets.SITE_URL }}/api/keepalive" || exit 1
