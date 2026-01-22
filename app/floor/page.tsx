@@ -151,46 +151,84 @@ export default function FloorPage() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-slate-700 text-white shadow-lg">
-        <div className="max-w-6xl mx-auto px-4 py-3">
-          {/* Top row: Title and nav links */}
-          <div className="flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          {/* Desktop layout */}
+          <div className="hidden sm:flex items-center justify-between">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold">Nursing Floor</h1>
-              <p className="text-slate-300 text-xs sm:text-sm">Tablet View</p>
+              <h1 className="text-2xl font-bold">Nursing Floor</h1>
+              <p className="text-slate-300 text-sm">Tablet View</p>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-4">
+              {notificationPermission === "default" && (
+                <button
+                  onClick={requestNotificationPermission}
+                  className="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg text-sm font-medium"
+                >
+                  Enable Alerts
+                </button>
+              )}
+              {notificationPermission === "granted" && (
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-300 text-sm">Alerts On</span>
+                  <button
+                    onClick={handleTestNotification}
+                    className="px-4 py-2 bg-slate-500 hover:bg-slate-400 rounded-lg text-sm"
+                  >
+                    Test
+                  </button>
+                </div>
+              )}
               <Link
                 href="/admin"
-                className="px-3 py-1.5 bg-slate-500 hover:bg-slate-400 rounded-lg text-xs sm:text-sm"
+                className="px-4 py-2 bg-slate-500 hover:bg-slate-400 rounded-lg text-sm"
               >
-                Admin
+                Open Admin View
               </Link>
-              <Link href="/" className="text-slate-300 hover:text-white text-xs sm:text-sm">
+              <Link href="/" className="text-slate-300 hover:text-white text-sm">
                 Home
               </Link>
             </div>
           </div>
-          {/* Bottom row: Alert status */}
-          <div className="flex items-center justify-end gap-2 mt-2 pt-2 border-t border-slate-600">
-            {notificationPermission === "default" && (
-              <button
-                onClick={requestNotificationPermission}
-                className="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg text-xs sm:text-sm font-medium"
-              >
-                Enable Alerts
-              </button>
-            )}
-            {notificationPermission === "granted" && (
-              <>
-                <span className="text-emerald-400 text-xs sm:text-sm">Alerts On</span>
-                <button
-                  onClick={handleTestNotification}
-                  className="px-3 py-1.5 bg-slate-500 hover:bg-slate-400 rounded-lg text-xs sm:text-sm"
+          {/* Mobile layout */}
+          <div className="sm:hidden">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-lg font-bold">Nursing Floor</h1>
+                <p className="text-slate-300 text-xs">Tablet View</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/admin"
+                  className="px-2 py-1 bg-slate-500 hover:bg-slate-400 rounded text-xs"
                 >
-                  Test
+                  Admin
+                </Link>
+                <Link href="/" className="text-slate-300 hover:text-white text-xs">
+                  Home
+                </Link>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 mt-2 pt-2 border-t border-slate-600">
+              {notificationPermission === "default" && (
+                <button
+                  onClick={requestNotificationPermission}
+                  className="px-2 py-1 bg-yellow-500 hover:bg-yellow-400 text-black rounded text-xs font-medium"
+                >
+                  Enable Alerts
                 </button>
-              </>
-            )}
+              )}
+              {notificationPermission === "granted" && (
+                <>
+                  <span className="text-emerald-400 text-xs">Alerts On</span>
+                  <button
+                    onClick={handleTestNotification}
+                    className="px-2 py-1 bg-slate-500 hover:bg-slate-400 rounded text-xs"
+                  >
+                    Test
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </header>

@@ -150,55 +150,102 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-blue-600 text-white shadow-lg">
-        <div className="max-w-6xl mx-auto px-4 py-3">
-          {/* Top row: Title and nav links */}
-          <div className="flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          {/* Desktop layout */}
+          <div className="hidden sm:flex items-center justify-between">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold">Front Desk</h1>
-              <p className="text-blue-100 text-xs sm:text-sm">Clerk View</p>
+              <h1 className="text-2xl font-bold">Front Desk Dashboard</h1>
+              <p className="text-blue-100 text-sm">Clerk View</p>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-4">
+              {notificationPermission === "default" && (
+                <button
+                  onClick={requestNotificationPermission}
+                  className="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg text-sm font-medium"
+                >
+                  Enable Alerts
+                </button>
+              )}
+              {notificationPermission === "granted" && (
+                <div className="flex items-center gap-2">
+                  <span className="text-blue-200 text-sm">Alerts On</span>
+                  <button
+                    onClick={() => {
+                      const testEvent = {
+                        id: `test-${Date.now()}`,
+                        resident_name: "Test Resident",
+                        room_number: "101",
+                      } as TransportEventWithResident;
+                      setToastEvent(testEvent);
+                      playDing();
+                      sendDesktopNotification(testEvent);
+                    }}
+                    className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-sm"
+                  >
+                    Test
+                  </button>
+                </div>
+              )}
               <Link
                 href="/floor"
-                className="px-3 py-1.5 bg-blue-500 hover:bg-blue-400 rounded-lg text-xs sm:text-sm"
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-sm"
               >
-                Floor
+                Open Floor View
               </Link>
-              <Link href="/" className="text-blue-200 hover:text-white text-xs sm:text-sm">
+              <Link href="/" className="text-blue-200 hover:text-white text-sm">
                 Home
               </Link>
             </div>
           </div>
-          {/* Bottom row: Alert status */}
-          <div className="flex items-center justify-end gap-2 mt-2 pt-2 border-t border-blue-500">
-            {notificationPermission === "default" && (
-              <button
-                onClick={requestNotificationPermission}
-                className="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg text-xs sm:text-sm font-medium"
-              >
-                Enable Alerts
-              </button>
-            )}
-            {notificationPermission === "granted" && (
-              <>
-                <span className="text-emerald-300 text-xs sm:text-sm">Alerts On</span>
-                <button
-                  onClick={() => {
-                    const testEvent = {
-                      id: `test-${Date.now()}`,
-                      resident_name: "Test Resident",
-                      room_number: "101",
-                    } as TransportEventWithResident;
-                    setToastEvent(testEvent);
-                    playDing();
-                    sendDesktopNotification(testEvent);
-                  }}
-                  className="px-3 py-1.5 bg-blue-500 hover:bg-blue-400 rounded-lg text-xs sm:text-sm"
+          {/* Mobile layout */}
+          <div className="sm:hidden">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-lg font-bold">Front Desk</h1>
+                <p className="text-blue-100 text-xs">Clerk View</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/floor"
+                  className="px-2 py-1 bg-blue-500 hover:bg-blue-400 rounded text-xs"
                 >
-                  Test
+                  Floor
+                </Link>
+                <Link href="/" className="text-blue-200 hover:text-white text-xs">
+                  Home
+                </Link>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 mt-2 pt-2 border-t border-blue-500">
+              {notificationPermission === "default" && (
+                <button
+                  onClick={requestNotificationPermission}
+                  className="px-2 py-1 bg-yellow-500 hover:bg-yellow-400 text-black rounded text-xs font-medium"
+                >
+                  Enable Alerts
                 </button>
-              </>
-            )}
+              )}
+              {notificationPermission === "granted" && (
+                <>
+                  <span className="text-emerald-300 text-xs">Alerts On</span>
+                  <button
+                    onClick={() => {
+                      const testEvent = {
+                        id: `test-${Date.now()}`,
+                        resident_name: "Test Resident",
+                        room_number: "101",
+                      } as TransportEventWithResident;
+                      setToastEvent(testEvent);
+                      playDing();
+                      sendDesktopNotification(testEvent);
+                    }}
+                    className="px-2 py-1 bg-blue-500 hover:bg-blue-400 rounded text-xs"
+                  >
+                    Test
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </header>
