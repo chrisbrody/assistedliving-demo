@@ -1,5 +1,5 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'facility-ready-board-v3';
+const CACHE_NAME = 'facility-ready-board-v4';
 
 // Install event - cache basic assets
 self.addEventListener('install', (event) => {
@@ -40,18 +40,16 @@ self.addEventListener('push', (event) => {
   const data = event.data.json();
   const { title, body, tag, data: notificationData } = data;
 
+  // iOS-friendly notification options
   const options = {
     body: body,
-    tag: tag || 'facility-ready-board',
+    tag: tag || `notification-${Date.now()}`, // Unique tag so each notification shows
     icon: 'https://api.dicebear.com/7.x/shapes/svg?seed=readyboard&size=192',
     badge: 'https://api.dicebear.com/7.x/shapes/svg?seed=readyboard&size=72',
-    vibrate: [200, 100, 200, 100, 200], // Vibration pattern for mobile
-    requireInteraction: true, // Keep notification visible until user interacts
     data: notificationData,
-    actions: [
-      { action: 'open', title: 'Open App' },
-      { action: 'dismiss', title: 'Dismiss' },
-    ],
+    // iOS requires these for sound/alert
+    silent: false,
+    renotify: true, // Alert even if same tag
   };
 
   event.waitUntil(

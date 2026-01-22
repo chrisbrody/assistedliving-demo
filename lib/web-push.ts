@@ -111,6 +111,10 @@ export async function sendPushNotification(
       {
         TTL: 60 * 60, // 1 hour
         urgency: "high",
+        headers: {
+          "apns-push-type": "alert", // Tell iOS this is an alert notification
+          "apns-priority": "10", // High priority (10 = immediate)
+        },
       }
     );
     return { success: true };
