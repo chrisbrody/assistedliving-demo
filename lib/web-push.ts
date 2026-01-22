@@ -5,13 +5,18 @@ import { supabase } from "./supabase";
 // WEB PUSH CONFIGURATION
 // ===========================================
 
-const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
-const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY!;
-const vapidSubject = process.env.VAPID_SUBJECT || "mailto:admin@facility.local";
+// Configure VAPID on demand (more reliable in serverless)
+function getConfiguredWebPush() {
+  const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
+  const vapidSubject = process.env.VAPID_SUBJECT || "mailto:admin@facility.local";
 
-// Configure web-push with VAPID keys
-if (vapidPublicKey && vapidPrivateKey) {
+  if (!vapidPublicKey || !vapidPrivateKey) {
+    throw new Error("VAPID keys not configured");
+  }
+
   webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
+  return webpush;
 }
 
 // ===========================================
@@ -99,7 +104,8 @@ export async function sendPushNotification(
   };
 
   try {
-    await webpush.sendNotification(
+    const wp = getConfiguredWebPush();
+    await wp.sendNotification(
       pushSubscription,
       JSON.stringify(payload),
       {
@@ -109,6 +115,7 @@ export async function sendPushNotification(
     );
     return { success: true };
   } catch (error: any) {
+    console.error("[Push] sendPushNotification error:", error);
     // If subscription is invalid/expired, remove it
     if (error.statusCode === 410 || error.statusCode === 404) {
       await deletePushSubscription(subscription.endpoint);

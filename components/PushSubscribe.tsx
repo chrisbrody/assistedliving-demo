@@ -142,13 +142,22 @@ export function PushSubscribe({ viewType }: PushSubscribeProps) {
         body: JSON.stringify({
           title: "Test Notification",
           body: "Push notifications are working!",
-          tag: "test",
-          viewType,
+          tag: `test-${Date.now()}`,
         }),
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to send test notification");
+        throw new Error(result.error || "Failed to send test notification");
+      }
+
+      if (result.sent === 0) {
+        setError(`No devices received the notification (${result.failed} failed)`);
+      } else {
+        // Show success briefly
+        setError(`Sent to ${result.sent} device(s)`);
+        setTimeout(() => setError(null), 3000);
       }
     } catch (err: any) {
       setError(err.message || "Failed to send test");

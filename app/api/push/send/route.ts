@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       data: { eventId, viewType },
     };
 
-    const result = await sendPushToAll(payload, viewType);
+    const result = await sendPushToAll(payload); // Send to ALL devices
 
     // Log the notification if there's an associated event
     if (eventId && result.sent > 0) {
