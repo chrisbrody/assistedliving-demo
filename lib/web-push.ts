@@ -120,23 +120,31 @@ export async function sendPushNotification(
 export async function sendPushToAll(
   payload: PushPayload,
   viewType?: "admin" | "floor"
-): Promise<{ sent: number; failed: number }> {
+): Promise<{ sent: number; failed: number; subscriptionCount: number }> {
+  console.log("[Push] sendPushToAll called with viewType:", viewType);
+  console.log("[Push] VAPID public key configured:", !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY);
+  console.log("[Push] VAPID private key configured:", !!process.env.VAPID_PRIVATE_KEY);
+
   const subscriptions = await getSubscriptionsByViewType(viewType);
+  console.log("[Push] Found subscriptions:", subscriptions.length);
 
   let sent = 0;
   let failed = 0;
 
   await Promise.all(
     subscriptions.map(async (sub) => {
+      console.log("[Push] Sending to endpoint:", sub.endpoint.substring(0, 50) + "...");
       const result = await sendPushNotification(sub, payload);
       if (result.success) {
         sent++;
+        console.log("[Push] Successfully sent to endpoint");
       } else {
         failed++;
-        console.error(`[Push] Failed to send to ${sub.endpoint}:`, result.error);
+        console.error(`[Push] Failed to send:`, result.error);
       }
     })
   );
 
-  return { sent, failed };
+  console.log("[Push] Final result - sent:", sent, "failed:", failed);
+  return { sent, failed, subscriptionCount: subscriptions.length };
 }

@@ -59,16 +59,21 @@ export async function POST(request: NextRequest) {
         hour12: true,
       });
 
-      // Send push notification to floor devices
-      await sendPushToAll(
-        {
-          title: `New Pickup: ${resident.full_name}`,
-          body: `Room ${resident.room_number} • ${pickupTimeStr}`,
-          tag: event.id,
-          data: { eventId: event.id, viewType: "floor" },
-        },
-        "floor" // Only send to floor-subscribed devices
-      );
+      // Send push notification to ALL subscribed devices
+      try {
+        const pushResult = await sendPushToAll(
+          {
+            title: `New Pickup: ${resident.full_name}`,
+            body: `Room ${resident.room_number} • ${pickupTimeStr}`,
+            tag: event.id,
+            data: { eventId: event.id, viewType: "floor" },
+          }
+          // No viewType filter - send to everyone
+        );
+        console.log("[API] Push notification result:", pushResult);
+      } catch (pushError) {
+        console.error("[API] Push notification error:", pushError);
+      }
     }
 
     return NextResponse.json(event, { status: 201 });
