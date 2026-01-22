@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
         hour12: true,
       });
 
-      // Send push notification to ALL subscribed devices
+      // Send push notification to floor/nurse devices
       try {
         const pushResult = await sendPushToAll(
           {
@@ -67,8 +67,8 @@ export async function POST(request: NextRequest) {
             body: `Room ${resident.room_number} • ${pickupTimeStr}`,
             tag: event.id,
             data: { eventId: event.id, viewType: "floor" },
-          }
-          // No viewType filter - send to everyone
+          },
+          "floor" // Notify nurses when new pickup is created
         );
         console.log("[API] Push notification result:", pushResult);
       } catch (pushError) {
