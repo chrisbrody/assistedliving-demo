@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
         hour: "numeric",
         minute: "2-digit",
         hour12: true,
+        timeZone: "America/New_York", // Eastern Time
       });
 
       // Send push notification to ALL subscribed devices
