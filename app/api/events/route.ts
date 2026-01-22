@@ -59,17 +59,14 @@ export async function POST(request: NextRequest) {
         hour12: true,
       });
 
-      // Send push notification to floor/nurse devices
+      // Send push notification to ALL subscribed devices
       try {
-        const pushResult = await sendPushToAll(
-          {
-            title: `New Pickup: ${resident.full_name}`,
-            body: `Room ${resident.room_number} • ${pickupTimeStr}`,
-            tag: event.id,
-            data: { eventId: event.id, viewType: "floor" },
-          },
-          "floor" // Notify nurses when new pickup is created
-        );
+        const pushResult = await sendPushToAll({
+          title: `New Pickup: ${resident.full_name}`,
+          body: `Room ${resident.room_number} • ${pickupTimeStr}`,
+          tag: event.id,
+          data: { eventId: event.id },
+        });
         console.log("[API] Push notification result:", pushResult);
       } catch (pushError) {
         console.error("[API] Push notification error:", pushError);

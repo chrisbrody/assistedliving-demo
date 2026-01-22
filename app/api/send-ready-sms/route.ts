@@ -67,16 +67,13 @@ export async function POST(request: NextRequest) {
     // Update event status to "ready"
     await updateEventStatus(eventId, "ready");
 
-    // Send push notification to admin devices
-    const pushResult = await sendPushToAll(
-      {
-        title: `${event.resident_name} is READY!`,
-        body: `Room ${event.room_number} • Waiting in the lobby`,
-        tag: eventId,
-        data: { eventId, viewType: "admin" },
-      },
-      "admin" // Only send to admin-subscribed devices
-    );
+    // Send push notification to ALL subscribed devices
+    const pushResult = await sendPushToAll({
+      title: `${event.resident_name} is READY!`,
+      body: `Room ${event.room_number} • Waiting in the lobby`,
+      tag: eventId,
+      data: { eventId },
+    });
 
     // Log push notification if any were sent
     if (pushResult.sent > 0) {
