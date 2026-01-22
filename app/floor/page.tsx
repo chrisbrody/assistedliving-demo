@@ -110,9 +110,6 @@ export default function FloorPage() {
 
       if (!response.ok) throw new Error(result.error || "Failed to send ready notification");
 
-      // Sound only - desktop notification goes to admin view per spec
-      playDing();
-
       // Refetch to update UI
       await refetch();
     } catch (e: any) {
