@@ -7,6 +7,7 @@ import { useCurrentTime } from "@/hooks/useCurrentTime";
 import { EventCard } from "@/components/EventCard";
 import { useSoundAlert } from "@/components/SoundAlert";
 import { Toast } from "@/components/Toast";
+import { PushSubscribe } from "@/components/PushSubscribe";
 import type { TransportEventWithResident } from "@/lib/types";
 
 export default function FloorPage() {
@@ -189,6 +190,17 @@ export default function FloorPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 py-6">
+        {/* Push Notification Subscription */}
+        <div className="mb-4 p-4 bg-white border border-gray-200 rounded-xl shadow-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-medium text-gray-900">Mobile Notifications</h3>
+              <p className="text-sm text-gray-500">Get alerts on this device when new pickups are added</p>
+            </div>
+            <PushSubscribe viewType="floor" />
+          </div>
+        </div>
+
         {/* Stats Bar */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-white border border-gray-200 rounded-xl p-4 text-center shadow-sm">

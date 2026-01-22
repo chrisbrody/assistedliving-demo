@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendReadyNotification } from "@/lib/twilio";
+import { sendPushToAll } from "@/lib/web-push";
 import { getEventById, logNotification, updateEventStatus } from "@/lib/queries";
 
 // ===========================================
@@ -66,10 +67,33 @@ export async function POST(request: NextRequest) {
     // Update event status to "ready"
     await updateEventStatus(eventId, "ready");
 
+    // Send push notification to admin devices
+    const pushResult = await sendPushToAll(
+      {
+        title: `${event.resident_name} is READY!`,
+        body: `Room ${event.room_number} • Waiting in the lobby`,
+        tag: eventId,
+        data: { eventId, viewType: "admin" },
+      },
+      "admin" // Only send to admin-subscribed devices
+    );
+
+    // Log push notification if any were sent
+    if (pushResult.sent > 0) {
+      await logNotification({
+        event_id: eventId,
+        notification_type: "push",
+        recipient: `${pushResult.sent} admin devices`,
+        message: `${event.resident_name} (Room ${event.room_number}) is ready!`,
+        status: "sent",
+      });
+    }
+
     return NextResponse.json({
       success: true,
       smsSent: smsResult.success,
       messageId: smsResult.messageId,
+      pushSent: pushResult.sent,
       error: smsResult.error,
     });
   } catch (error: any) {

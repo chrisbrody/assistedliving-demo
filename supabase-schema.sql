@@ -146,6 +146,35 @@ INSERT INTO residents (full_name, room_number, family_phone, dietary_notes) VALU
   ('Charles Davis', '118-B', NULL, 'Low sodium, diabetic');
 
 -- ===========================================
+-- TABLE: push_subscriptions
+-- ===========================================
+-- Store Web Push subscriptions for PWA notifications
+
+CREATE TABLE push_subscriptions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  endpoint TEXT NOT NULL UNIQUE,
+  p256dh TEXT NOT NULL,
+  auth TEXT NOT NULL,
+  user_agent TEXT,
+  view_type TEXT DEFAULT 'floor', -- 'admin' or 'floor' - which view subscribed
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Apply auto-update trigger
+CREATE TRIGGER update_push_subscriptions_updated_at
+  BEFORE UPDATE ON push_subscriptions
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- RLS policy
+ALTER TABLE push_subscriptions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all for push_subscriptions" ON push_subscriptions FOR ALL USING (true) WITH CHECK (true);
+
+-- Index for quick lookup by endpoint
+CREATE INDEX idx_push_subscriptions_endpoint ON push_subscriptions(endpoint);
+CREATE INDEX idx_push_subscriptions_view_type ON push_subscriptions(view_type);
+
+-- ===========================================
 -- VIEW: Today's pickups with resident info
 -- ===========================================
 

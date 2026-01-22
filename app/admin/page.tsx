@@ -8,6 +8,7 @@ import { EventCard } from "@/components/EventCard";
 import { AddEventForm } from "@/components/AddEventForm";
 import { useSoundAlert } from "@/components/SoundAlert";
 import { Toast } from "@/components/Toast";
+import { PushSubscribe } from "@/components/PushSubscribe";
 import type { Resident, EventType, TransportEventWithResident } from "@/lib/types";
 
 export default function AdminPage() {
@@ -206,6 +207,13 @@ export default function AdminPage() {
               onSubmit={handleAddEvent}
               isSubmitting={isSubmitting}
             />
+
+            {/* Push Notification Subscription */}
+            <div className="mt-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+              <h3 className="font-medium text-gray-900 mb-2">Mobile Notifications</h3>
+              <p className="text-sm text-gray-500 mb-3">Get alerts on this device when a resident is ready</p>
+              <PushSubscribe viewType="admin" />
+            </div>
 
             {/* Demo Reset Button */}
             <div className="mt-4">

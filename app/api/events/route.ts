@@ -3,7 +3,9 @@ import {
   getTodaysEvents,
   createTransportEvent,
   resetDemoData,
+  getResidentById,
 } from "@/lib/queries";
+import { sendPushToAll } from "@/lib/web-push";
 
 // ===========================================
 // GET /api/events
@@ -47,6 +49,27 @@ export async function POST(request: NextRequest) {
       purpose,
       notes,
     });
+
+    // Get resident details for push notification
+    const resident = await getResidentById(resident_id);
+    if (resident) {
+      const pickupTimeStr = new Date(pickup_time).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+
+      // Send push notification to floor devices
+      await sendPushToAll(
+        {
+          title: `New Pickup: ${resident.full_name}`,
+          body: `Room ${resident.room_number} • ${pickupTimeStr}`,
+          tag: event.id,
+          data: { eventId: event.id, viewType: "floor" },
+        },
+        "floor" // Only send to floor-subscribed devices
+      );
+    }
 
     return NextResponse.json(event, { status: 201 });
   } catch (error: any) {

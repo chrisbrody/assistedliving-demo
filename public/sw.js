@@ -1,5 +1,5 @@
 // Service Worker for PWA functionality
-const CACHE_NAME = 'facility-ready-board-v2';
+const CACHE_NAME = 'facility-ready-board-v3';
 
 // Install event - cache basic assets
 self.addEventListener('install', (event) => {
@@ -29,9 +29,48 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+// ===========================================
+// PUSH NOTIFICATIONS
+// ===========================================
+
+// Handle incoming push messages
+self.addEventListener('push', (event) => {
+  if (!event.data) return;
+
+  const data = event.data.json();
+  const { title, body, tag, data: notificationData } = data;
+
+  const options = {
+    body: body,
+    tag: tag || 'facility-ready-board',
+    icon: 'https://api.dicebear.com/7.x/shapes/svg?seed=readyboard&size=192',
+    badge: 'https://api.dicebear.com/7.x/shapes/svg?seed=readyboard&size=72',
+    vibrate: [200, 100, 200, 100, 200], // Vibration pattern for mobile
+    requireInteraction: true, // Keep notification visible until user interacts
+    data: notificationData,
+    actions: [
+      { action: 'open', title: 'Open App' },
+      { action: 'dismiss', title: 'Dismiss' },
+    ],
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+
 // Notification click - focus or open the app
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+
+  // Handle action button clicks
+  if (event.action === 'dismiss') {
+    return;
+  }
+
+  // Determine which view to open based on notification data
+  const viewType = event.notification.data?.viewType || 'admin';
+  const targetPath = viewType === 'floor' ? '/floor' : '/admin';
 
   // Focus existing window or open new one
   event.waitUntil(
@@ -43,7 +82,7 @@ self.addEventListener('notificationclick', (event) => {
         }
       }
       // Open new window if none exists
-      return clients.openWindow('/admin');
+      return clients.openWindow(targetPath);
     })
   );
 });
