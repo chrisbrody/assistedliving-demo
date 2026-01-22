@@ -151,40 +151,46 @@ export default function FloorPage() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-slate-700 text-white shadow-lg">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Nursing Floor</h1>
-            <p className="text-slate-300 text-sm">Tablet View</p>
+        <div className="max-w-6xl mx-auto px-4 py-3">
+          {/* Top row: Title and nav links */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold">Nursing Floor</h1>
+              <p className="text-slate-300 text-xs sm:text-sm">Tablet View</p>
+            </div>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Link
+                href="/admin"
+                className="px-3 py-1.5 bg-slate-500 hover:bg-slate-400 rounded-lg text-xs sm:text-sm"
+              >
+                Admin
+              </Link>
+              <Link href="/" className="text-slate-300 hover:text-white text-xs sm:text-sm">
+                Home
+              </Link>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
+          {/* Bottom row: Alert status */}
+          <div className="flex items-center justify-end gap-2 mt-2 pt-2 border-t border-slate-600">
             {notificationPermission === "default" && (
               <button
                 onClick={requestNotificationPermission}
-                className="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg text-sm font-medium"
+                className="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg text-xs sm:text-sm font-medium"
               >
                 Enable Alerts
               </button>
             )}
             {notificationPermission === "granted" && (
-              <div className="flex items-center gap-2">
-                <span className="text-slate-300 text-sm">Alerts On</span>
+              <>
+                <span className="text-emerald-400 text-xs sm:text-sm">Alerts On</span>
                 <button
                   onClick={handleTestNotification}
-                  className="px-4 py-2 bg-slate-500 hover:bg-slate-400 rounded-lg text-sm"
+                  className="px-3 py-1.5 bg-slate-500 hover:bg-slate-400 rounded-lg text-xs sm:text-sm"
                 >
                   Test
                 </button>
-              </div>
+              </>
             )}
-            <Link
-              href="/admin"
-              className="px-4 py-2 bg-slate-500 hover:bg-slate-400 rounded-lg text-sm w-[160px] text-center"
-            >
-              Open Admin View
-            </Link>
-            <Link href="/" className="text-slate-300 hover:text-white text-sm">
-              Home
-            </Link>
           </div>
         </div>
       </header>

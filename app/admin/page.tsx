@@ -150,28 +150,42 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-blue-600 text-white shadow-lg">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Front Desk Dashboard</h1>
-            <p className="text-blue-100 text-sm">Clerk View</p>
+        <div className="max-w-6xl mx-auto px-4 py-3">
+          {/* Top row: Title and nav links */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold">Front Desk</h1>
+              <p className="text-blue-100 text-xs sm:text-sm">Clerk View</p>
+            </div>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <Link
+                href="/floor"
+                className="px-3 py-1.5 bg-blue-500 hover:bg-blue-400 rounded-lg text-xs sm:text-sm"
+              >
+                Floor
+              </Link>
+              <Link href="/" className="text-blue-200 hover:text-white text-xs sm:text-sm">
+                Home
+              </Link>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            {/* Notification Permission Button */}
+          {/* Bottom row: Alert status */}
+          <div className="flex items-center justify-end gap-2 mt-2 pt-2 border-t border-blue-500">
             {notificationPermission === "default" && (
               <button
                 onClick={requestNotificationPermission}
-                className="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg text-sm font-medium"
+                className="px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-black rounded-lg text-xs sm:text-sm font-medium"
               >
                 Enable Alerts
               </button>
             )}
             {notificationPermission === "granted" && (
-              <div className="flex items-center gap-2">
-                <span className="text-blue-200 text-sm">Alerts On</span>
+              <>
+                <span className="text-emerald-300 text-xs sm:text-sm">Alerts On</span>
                 <button
                   onClick={() => {
                     const testEvent = {
-                      id: `test-${Date.now()}`, // Unique ID so desktop notification always shows
+                      id: `test-${Date.now()}`,
                       resident_name: "Test Resident",
                       room_number: "101",
                     } as TransportEventWithResident;
@@ -179,21 +193,12 @@ export default function AdminPage() {
                     playDing();
                     sendDesktopNotification(testEvent);
                   }}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-sm"
+                  className="px-3 py-1.5 bg-blue-500 hover:bg-blue-400 rounded-lg text-xs sm:text-sm"
                 >
                   Test
                 </button>
-              </div>
+              </>
             )}
-            <Link
-              href="/floor"
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-400 rounded-lg text-sm w-[160px] text-center"
-            >
-              Open Floor View
-            </Link>
-            <Link href="/" className="text-blue-200 hover:text-white text-sm">
-              Home
-            </Link>
           </div>
         </div>
       </header>
